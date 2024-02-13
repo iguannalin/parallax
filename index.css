@@ -39,7 +39,8 @@ img {
 }
 
 .shadow {
+  border-radius: 5px;
   position: fixed;
   display: block;
-  background-color: yellow;
+  /* background-color: hsl(195, 53%, 79%); */
 }

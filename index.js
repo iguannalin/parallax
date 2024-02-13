@@ -5,14 +5,13 @@ window.addEventListener("load", () => {
     return Math.floor(Math.random() * (max - min) + min); // The maximum is exclusive and the minimum is inclusive
   }
   let os = 100;
-  let square = 100;
+  let square = 50;
   let wx = 0;
   let wy = 0;
   const container = document.getElementById("container");
-  let time = 2000;
-  let prev = {x:0,y:0};
-  let delta = {x:0, y:0};
+  let time = 150;
   const shadows = [];
+  let index = 0;
 
   // get window position code from -- https://stackoverflow.com/a/17980638
   function get_window_x_pos()
@@ -37,20 +36,13 @@ window.addEventListener("load", () => {
   wx = get_window_x_pos();
   wy = get_window_y_pos();
 
-  // setInterval(() => {
-  //   let x = get_window_x_pos();
-  //   let y = get_window_y_pos();
-  //   wx = x; wy = y;
-  //   if (x != wx || y != wy) console.log("x moved"); 
-  // }, 100);
-
   // scale/map function from -- https://stackoverflow.com/a/23202637
   function scale (number, inMin, inMax, outMin, outMax) {
     return (number - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
   }
   
   function createWindow(index) {
-    const text = `<!DOCTYPE html><html> <head> <title>keep</title> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1"><style>body {background-color: rgb(35, 35, 35); margin-top: 25vh; text-align: center; font-size: 36px;}</style></head> <body><div id="container">${index == 0 ? "🕐" : "🪞"}</div><script>setTimeout(window.close, ${time});</script></body></html>`;
+    const text = `<!DOCTYPE html><html> <head> <title>keep</title> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1"><style>body {background-color: rgb(35, 35, 35); margin-top: 25vh; text-align: center; font-size: 36px;}</style></head> <body><div id="container">💧</div><script>let wtop = window.screenY ? window.screenY : window.screenTop || 0;let wleft = window.screenX ? window.screenX : window.screenLeft || 0; setTimeout(()=>{setInterval(()=>{ wtop+=1.5; window.moveTo(wleft, wtop);}, ${time})},${time+50});setTimeout(() => {window.close()}, ${time}*50);</script></body></html>`;
     const blob = new Blob([text], {type: "text/html"});
     const blobUrl = URL.createObjectURL(blob);
     const wLeft = wx + getRandomInt(-os, window.innerWidth+os);
@@ -64,41 +56,28 @@ window.addEventListener("load", () => {
     span.style.height = square+'px';
     let sT = scale(wTop, 0, screen.height, 0, window.innerHeight) + "px";
     let sL = scale(wLeft, 0, screen.width, 0, window.innerWidth) + "px";
-    console.log({sT, sL});
     span.style.top = sT;
     span.style.left = sL;
+    const color = `hsl(195, 53%, ${getRandomInt(40,70)}%)`;
+    span.style.backgroundColor = color;
     shadows.push(span);
     container.appendChild(span);
   }
 
   function moveShadows() {
     shadows.forEach((s) => {
-      s.style.left = +(s.style.left.split("px")[0]) + delta.x + "px";
-      s.style.top = +(s.style.top.split("px")[0]) + delta.y + "px";
+      s.style.left = +(s.style.left.split("px")[0]) + 0 + "px";
+      s.style.top = +(s.style.top.split("px")[0]) + 1 + "px";
     })
   }
 
-  window.onmousemove = (c) => {
-    if (c.x < prev.x) {
-      // moved left, move shadows right
-      delta.x = 1;
-    } else {
-      // moved right
-      delta.x = -1;
-    }
-    if (c.y < prev.y) {
-      // moved up, move shadows down
-      delta.y = -1;
-    } else {
-      // moved down
-      delta.y = 1;
-    }
-    prev = {x:c.x, y:c.y};
+  setInterval(() => {
     moveShadows();
-  }
+  },
+  time);
 
-  
-  // setInterval(() => {
-  //   for (let i = 0; i < 2; i++) createWindow(i);
-  // }, time+500);
+  setInterval(() => {
+    if (index < 50) createWindow(1);
+    index += 1;
+  }, time+500);
 });
